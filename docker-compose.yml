@@ -1,0 +1,51 @@
+version: '3'
+
+services:
+  auctioneer:
+    container_name: auctioneer
+    build: auctioneer/
+    image: auctioneer
+    ports:
+      - "8080:8080"
+  bidder1:
+    container_name: bidder1
+    build: bidder/
+    image: bidder
+    environment:
+      - APP_URL=http://bidder1
+      - APP_PORT=8081
+      - DELAY_TIME_MS=100
+      - REGISTRATION_URL=http://auctioneer:8080/register
+    depends_on:
+      - auctioneer
+    ports:
+      - "8081:8081"
+    restart: on-failure
+  bidder2:
+    build: bidder/
+    image: bidder
+    container_name: bidder2
+    environment:
+      - APP_URL=http://bidder2
+      - APP_PORT=8082
+      - DELAY_TIME_MS=100
+      - REGISTRATION_URL=http://auctioneer:8080/register
+    depends_on:
+      - auctioneer
+    ports:
+      - "8082:8082"
+    restart: on-failure
+  bidder3:
+    container_name: bidder3
+    build: bidder/
+    image: bidder
+    environment:
+      - APP_URL=http://bidder3
+      - APP_PORT=8083
+      - DELAY_TIME_MS=50
+      - REGISTRATION_URL=http://auctioneer:8080/register
+    depends_on:
+      - auctioneer
+    ports:
+      - "8083:8083"
+    restart: on-failure
